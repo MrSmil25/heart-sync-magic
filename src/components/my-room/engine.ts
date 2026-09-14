@@ -34,6 +34,10 @@ export type MyRoomHandle = {
 export function createMyRoom(root: HTMLElement, options: MyRoomOptions): MyRoomHandle {
   "use strict";
   let destroyed = false;
+  // Semua listener & fetch dibatalkan lewat controller ini saat destroy(),
+  // supaya tidak ada sisa animasi/listener ketika komponen dipasang ulang.
+  const lifecycle = new AbortController();
+  const sig = lifecycle.signal;
   ("use strict");
   // Change these values to tune the visual without changing the animation logic.
   const CONFIG = {
@@ -524,15 +528,19 @@ export function createMyRoom(root: HTMLElement, options: MyRoomOptions): MyRoomH
   }
   async function init() {
     try {
-      const response = await fetch(MODEL_URL);
+      const response = await fetch(MODEL_URL, { signal: sig });
+      if (destroyed) return;
       if (!response.ok) throw Error("model fetch failed");
       const packed = Uint8Array.from(atob((await response.text()).trim()), (c) => c.charCodeAt(0));
+      if (destroyed) return;
       const bytes = await new Response(
           new Blob([packed]).stream().pipeThrough(new DecompressionStream("gzip")),
         ).arrayBuffer(),
         length = new DataView(bytes).getUint32(0, true),
         meta = JSON.parse(new TextDecoder().decode(new Uint8Array(bytes, 4, length))),
         base = 4 + length;
+      // Jangan pernah membuat konteks WebGL baru setelah komponen dilepas.
+      if (destroyed) return;
       gpu = createRenderer();
       for (const name of ["RK", "UI"]) {
         const parts = meta[name].map((m) => {
@@ -568,6 +576,7 @@ export function createMyRoom(root: HTMLElement, options: MyRoomOptions): MyRoomH
       layoutDirty = true;
       if (options.initialOpen) begin(true);
     } catch (error) {
+      if (destroyed) return;
       gpu = null;
       fallback.hidden = false;
       pageStatus.textContent = "Mode ringan aktif. Klik untuk masuk.";
@@ -781,20 +790,26 @@ export function createMyRoom(root: HTMLElement, options: MyRoomOptions): MyRoomH
   requestDraw();
   return {
     destroy() {
+      if (destroyed) return;
       destroyed = true;
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
+      lifecycle.abort();
       media.removeEventListener("change", onMedia);
       document.removeEventListener("keydown", onKeydown);
       document.removeEventListener("visibilitychange", onVisibility);
       resize.disconnect();
       visibility.disconnect();
+      transition = null;
       if (gpu) {
         const ext = gpu.gl.getExtension("WEBGL_lose_context");
         if (ext) ext.loseContext();
         gpu = null;
       }
       models = [];
+      pose = [];
+      document.body.style.removeProperty("overflow");
+      document.body.style.removeProperty("pointer-events");
     },
     setStatus(text: string) {
       status.textContent = text;
