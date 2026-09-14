@@ -36,6 +36,9 @@ import {
   fetchMyPendingCancelRequests,
 } from "@/lib/cancel-requests";
 import { cn } from "@/lib/utils";
+import { canAssign } from "@/lib/internal-assignments";
+import { AssignedToMeTab } from "@/components/workspace-assignments/AssignedToMeTab";
+import { AssignedByMeTab } from "@/components/workspace-assignments/AssignedByMeTab";
 
 export const Route = createFileRoute("/_authenticated/workspace")({
   head: () => ({
@@ -93,7 +96,9 @@ function WorkspacePage() {
   const [formOpen, setFormOpen] = useState(false);
   const [blockTarget, setBlockTarget] = useState<{ id: string; title: string } | null>(null);
   const [cancelTarget, setCancelTarget] = useState<{ id: string; title: string } | null>(null);
-  const [tab, setTab] = useState<"board" | "cancels">("board");
+  const [tab, setTab] = useState<
+    "board" | "cancels" | "assigned-to-me" | "assigned-by-me"
+  >("board");
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
@@ -234,12 +239,32 @@ function WorkspacePage() {
         )}
       </section>
 
-      {canDecideCancels && (
+      {(
         <div className="flex flex-wrap gap-2">
-          {([
-            { key: "board" as const, label: "Papan Task Saya" },
-            { key: "cancels" as const, label: "Permintaan Pembatalan", badge: pendingCancelCount },
-          ]).map((t) => (
+          {(
+            [
+              { key: "board" as const, label: "Papan Task Saya", badge: 0 },
+              { key: "assigned-to-me" as const, label: "Tugas untuk Saya", badge: 0 },
+              ...(canAssign(profile?.role)
+                ? [
+                    {
+                      key: "assigned-by-me" as const,
+                      label: "Ditugaskan oleh Saya",
+                      badge: 0,
+                    },
+                  ]
+                : []),
+              ...(canDecideCancels
+                ? [
+                    {
+                      key: "cancels" as const,
+                      label: "Permintaan Pembatalan",
+                      badge: pendingCancelCount,
+                    },
+                  ]
+                : []),
+            ]
+          ).map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
@@ -259,7 +284,11 @@ function WorkspacePage() {
         </div>
       )}
 
-      {canDecideCancels && tab === "cancels" ? (
+      {tab === "assigned-to-me" ? (
+        <AssignedToMeTab me={profile} />
+      ) : tab === "assigned-by-me" && canAssign(profile?.role) ? (
+        <AssignedByMeTab me={profile} />
+      ) : canDecideCancels && tab === "cancels" ? (
         <section className="space-y-3">
           <h2 className="text-lg font-semibold">Permintaan Pembatalan</h2>
           <CancelRequestsPanel maps={originMaps} />
@@ -304,7 +333,7 @@ function WorkspacePage() {
         </section>
       )}
 
-      <section className="space-y-3">
+      <section className={cn("space-y-3", tab !== "board" && "hidden")}>
         <h2 className="text-lg font-semibold">Deal Saya</h2>
         <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
           <table className="w-full min-w-[640px] text-sm">
