@@ -74,6 +74,7 @@ import { Route as AuthenticatedStakeholdersIndividualsIndexRouteImport } from '.
 import { Route as AuthenticatedStakeholdersIndividualsIdRouteImport } from './routes/_authenticated/stakeholders.individuals.$id'
 import { Route as AuthenticatedWarningsProposalsIndexRouteImport } from './routes/_authenticated/warnings_.proposals.index'
 import { Route as AuthenticatedWarningsProposalsIdRouteImport } from './routes/_authenticated/warnings_.proposals.$id'
+import { Route as AuthenticatedWorkspaceTasksAssignedIdRouteImport } from './routes/_authenticated/workspace_.tasks-assigned.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -441,6 +442,12 @@ const AuthenticatedWarningsProposalsIdRoute =
     path: '/warnings/proposals/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedWorkspaceTasksAssignedIdRoute =
+  AuthenticatedWorkspaceTasksAssignedIdRouteImport.update({
+    id: '/workspace_/tasks-assigned/$id',
+    path: '/workspace/tasks-assigned/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -503,6 +510,7 @@ export interface FileRoutesByFullPath {
   '/reports/holdings/$id': typeof AuthenticatedReportsHoldingsIdRoute
   '/stakeholders/individuals/$id': typeof AuthenticatedStakeholdersIndividualsIdRoute
   '/warnings/proposals/$id': typeof AuthenticatedWarningsProposalsIdRoute
+  '/workspace/tasks-assigned/$id': typeof AuthenticatedWorkspaceTasksAssignedIdRoute
   '/mentor/assignments/': typeof AuthenticatedMentorAssignmentsIndexRoute
   '/reports/holdings/': typeof AuthenticatedReportsHoldingsIndexRoute
   '/stakeholders/individuals/': typeof AuthenticatedStakeholdersIndividualsIndexRoute
@@ -568,6 +576,7 @@ export interface FileRoutesByTo {
   '/reports/holdings/$id': typeof AuthenticatedReportsHoldingsIdRoute
   '/stakeholders/individuals/$id': typeof AuthenticatedStakeholdersIndividualsIdRoute
   '/warnings/proposals/$id': typeof AuthenticatedWarningsProposalsIdRoute
+  '/workspace/tasks-assigned/$id': typeof AuthenticatedWorkspaceTasksAssignedIdRoute
   '/mentor/assignments': typeof AuthenticatedMentorAssignmentsIndexRoute
   '/reports/holdings': typeof AuthenticatedReportsHoldingsIndexRoute
   '/stakeholders/individuals': typeof AuthenticatedStakeholdersIndividualsIndexRoute
@@ -636,6 +645,7 @@ export interface FileRoutesById {
   '/_authenticated/reports/holdings/$id': typeof AuthenticatedReportsHoldingsIdRoute
   '/_authenticated/stakeholders/individuals/$id': typeof AuthenticatedStakeholdersIndividualsIdRoute
   '/_authenticated/warnings_/proposals/$id': typeof AuthenticatedWarningsProposalsIdRoute
+  '/_authenticated/workspace_/tasks-assigned/$id': typeof AuthenticatedWorkspaceTasksAssignedIdRoute
   '/_authenticated/mentor/assignments/': typeof AuthenticatedMentorAssignmentsIndexRoute
   '/_authenticated/reports/holdings/': typeof AuthenticatedReportsHoldingsIndexRoute
   '/_authenticated/stakeholders/individuals/': typeof AuthenticatedStakeholdersIndividualsIndexRoute
@@ -704,6 +714,7 @@ export interface FileRouteTypes {
     | '/reports/holdings/$id'
     | '/stakeholders/individuals/$id'
     | '/warnings/proposals/$id'
+    | '/workspace/tasks-assigned/$id'
     | '/mentor/assignments/'
     | '/reports/holdings/'
     | '/stakeholders/individuals/'
@@ -769,6 +780,7 @@ export interface FileRouteTypes {
     | '/reports/holdings/$id'
     | '/stakeholders/individuals/$id'
     | '/warnings/proposals/$id'
+    | '/workspace/tasks-assigned/$id'
     | '/mentor/assignments'
     | '/reports/holdings'
     | '/stakeholders/individuals'
@@ -836,6 +848,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports/holdings/$id'
     | '/_authenticated/stakeholders/individuals/$id'
     | '/_authenticated/warnings_/proposals/$id'
+    | '/_authenticated/workspace_/tasks-assigned/$id'
     | '/_authenticated/mentor/assignments/'
     | '/_authenticated/reports/holdings/'
     | '/_authenticated/stakeholders/individuals/'
@@ -1308,6 +1321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWarningsProposalsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/workspace_/tasks-assigned/$id': {
+      id: '/_authenticated/workspace_/tasks-assigned/$id'
+      path: '/workspace/tasks-assigned/$id'
+      fullPath: '/workspace/tasks-assigned/$id'
+      preLoaderRoute: typeof AuthenticatedWorkspaceTasksAssignedIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -1381,6 +1401,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsHoldingsIdRoute: typeof AuthenticatedReportsHoldingsIdRoute
   AuthenticatedStakeholdersIndividualsIdRoute: typeof AuthenticatedStakeholdersIndividualsIdRoute
   AuthenticatedWarningsProposalsIdRoute: typeof AuthenticatedWarningsProposalsIdRoute
+  AuthenticatedWorkspaceTasksAssignedIdRoute: typeof AuthenticatedWorkspaceTasksAssignedIdRoute
   AuthenticatedMentorAssignmentsIndexRoute: typeof AuthenticatedMentorAssignmentsIndexRoute
   AuthenticatedReportsHoldingsIndexRoute: typeof AuthenticatedReportsHoldingsIndexRoute
   AuthenticatedStakeholdersIndividualsIndexRoute: typeof AuthenticatedStakeholdersIndividualsIndexRoute
@@ -1444,6 +1465,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedStakeholdersIndividualsIdRoute:
     AuthenticatedStakeholdersIndividualsIdRoute,
   AuthenticatedWarningsProposalsIdRoute: AuthenticatedWarningsProposalsIdRoute,
+  AuthenticatedWorkspaceTasksAssignedIdRoute:
+    AuthenticatedWorkspaceTasksAssignedIdRoute,
   AuthenticatedMentorAssignmentsIndexRoute:
     AuthenticatedMentorAssignmentsIndexRoute,
   AuthenticatedReportsHoldingsIndexRoute:

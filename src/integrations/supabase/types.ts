@@ -310,6 +310,111 @@ export type Database = {
           },
         ]
       }
+      assignment_escalations: {
+        Row: {
+          escalated_at: string
+          from_user: string
+          id: string
+          note: string
+          submission_id: string
+          to_user: string
+        }
+        Insert: {
+          escalated_at?: string
+          from_user: string
+          id?: string
+          note: string
+          submission_id: string
+          to_user: string
+        }
+        Update: {
+          escalated_at?: string
+          from_user?: string
+          id?: string
+          note?: string
+          submission_id?: string
+          to_user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignment_escalations_from_user_fkey"
+            columns: ["from_user"]
+            isOneToOne: false
+            referencedRelation: "design_workload"
+            referencedColumns: ["designer_id"]
+          },
+          {
+            foreignKeyName: "assignment_escalations_from_user_fkey"
+            columns: ["from_user"]
+            isOneToOne: false
+            referencedRelation: "member_holdings"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "assignment_escalations_from_user_fkey"
+            columns: ["from_user"]
+            isOneToOne: false
+            referencedRelation: "member_progress"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "assignment_escalations_from_user_fkey"
+            columns: ["from_user"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignment_escalations_from_user_fkey"
+            columns: ["from_user"]
+            isOneToOne: false
+            referencedRelation: "workload_distribution"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "assignment_escalations_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "assignment_submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignment_escalations_to_user_fkey"
+            columns: ["to_user"]
+            isOneToOne: false
+            referencedRelation: "design_workload"
+            referencedColumns: ["designer_id"]
+          },
+          {
+            foreignKeyName: "assignment_escalations_to_user_fkey"
+            columns: ["to_user"]
+            isOneToOne: false
+            referencedRelation: "member_holdings"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "assignment_escalations_to_user_fkey"
+            columns: ["to_user"]
+            isOneToOne: false
+            referencedRelation: "member_progress"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "assignment_escalations_to_user_fkey"
+            columns: ["to_user"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignment_escalations_to_user_fkey"
+            columns: ["to_user"]
+            isOneToOne: false
+            referencedRelation: "workload_distribution"
+            referencedColumns: ["member_id"]
+          },
+        ]
+      }
       assignment_submissions: {
         Row: {
           assignment_id: string | null
@@ -317,8 +422,13 @@ export type Database = {
           commented_by: string | null
           content: string | null
           file_url: string | null
+          finalized_at: string | null
+          finalized_by: string | null
           id: string
+          member_cancel_reason: string | null
+          member_cancelled_at: string | null
           member_id: string | null
+          review_status: Database["public"]["Enums"]["review_status"]
           submitted_at: string | null
           supervisor_comment: string | null
           updated_at: string | null
@@ -329,8 +439,13 @@ export type Database = {
           commented_by?: string | null
           content?: string | null
           file_url?: string | null
+          finalized_at?: string | null
+          finalized_by?: string | null
           id?: string
+          member_cancel_reason?: string | null
+          member_cancelled_at?: string | null
           member_id?: string | null
+          review_status?: Database["public"]["Enums"]["review_status"]
           submitted_at?: string | null
           supervisor_comment?: string | null
           updated_at?: string | null
@@ -341,8 +456,13 @@ export type Database = {
           commented_by?: string | null
           content?: string | null
           file_url?: string | null
+          finalized_at?: string | null
+          finalized_by?: string | null
           id?: string
+          member_cancel_reason?: string | null
+          member_cancelled_at?: string | null
           member_id?: string | null
+          review_status?: Database["public"]["Enums"]["review_status"]
           submitted_at?: string | null
           supervisor_comment?: string | null
           updated_at?: string | null
@@ -393,6 +513,41 @@ export type Database = {
           {
             foreignKeyName: "assignment_submissions_commented_by_fkey"
             columns: ["commented_by"]
+            isOneToOne: false
+            referencedRelation: "workload_distribution"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "assignment_submissions_finalized_by_fkey"
+            columns: ["finalized_by"]
+            isOneToOne: false
+            referencedRelation: "design_workload"
+            referencedColumns: ["designer_id"]
+          },
+          {
+            foreignKeyName: "assignment_submissions_finalized_by_fkey"
+            columns: ["finalized_by"]
+            isOneToOne: false
+            referencedRelation: "member_holdings"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "assignment_submissions_finalized_by_fkey"
+            columns: ["finalized_by"]
+            isOneToOne: false
+            referencedRelation: "member_progress"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "assignment_submissions_finalized_by_fkey"
+            columns: ["finalized_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignment_submissions_finalized_by_fkey"
+            columns: ["finalized_by"]
             isOneToOne: false
             referencedRelation: "workload_distribution"
             referencedColumns: ["member_id"]
@@ -506,6 +661,11 @@ export type Database = {
         Row: {
           allow_file: boolean | null
           allow_text: boolean | null
+          assigner_role: Database["public"]["Enums"]["user_role"] | null
+          assignment_type: Database["public"]["Enums"]["assignment_type"]
+          cancelled_at: string | null
+          cancelled_by: string | null
+          cancelled_reason: string | null
           category: string | null
           created_at: string | null
           created_by: string | null
@@ -513,15 +673,22 @@ export type Database = {
           id: string
           instructions: string | null
           is_active: boolean | null
+          is_cancelled: boolean
           scope: Database["public"]["Enums"]["assignment_scope"]
           target_division: string | null
           title: string
           updated_at: string | null
           visibility: Database["public"]["Enums"]["submission_visibility"]
+          visibility_flags: Json
         }
         Insert: {
           allow_file?: boolean | null
           allow_text?: boolean | null
+          assigner_role?: Database["public"]["Enums"]["user_role"] | null
+          assignment_type?: Database["public"]["Enums"]["assignment_type"]
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          cancelled_reason?: string | null
           category?: string | null
           created_at?: string | null
           created_by?: string | null
@@ -529,15 +696,22 @@ export type Database = {
           id?: string
           instructions?: string | null
           is_active?: boolean | null
+          is_cancelled?: boolean
           scope?: Database["public"]["Enums"]["assignment_scope"]
           target_division?: string | null
           title: string
           updated_at?: string | null
           visibility?: Database["public"]["Enums"]["submission_visibility"]
+          visibility_flags?: Json
         }
         Update: {
           allow_file?: boolean | null
           allow_text?: boolean | null
+          assigner_role?: Database["public"]["Enums"]["user_role"] | null
+          assignment_type?: Database["public"]["Enums"]["assignment_type"]
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          cancelled_reason?: string | null
           category?: string | null
           created_at?: string | null
           created_by?: string | null
@@ -545,13 +719,50 @@ export type Database = {
           id?: string
           instructions?: string | null
           is_active?: boolean | null
+          is_cancelled?: boolean
           scope?: Database["public"]["Enums"]["assignment_scope"]
           target_division?: string | null
           title?: string
           updated_at?: string | null
           visibility?: Database["public"]["Enums"]["submission_visibility"]
+          visibility_flags?: Json
         }
         Relationships: [
+          {
+            foreignKeyName: "assignments_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "design_workload"
+            referencedColumns: ["designer_id"]
+          },
+          {
+            foreignKeyName: "assignments_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "member_holdings"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "assignments_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "member_progress"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "assignments_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "workload_distribution"
+            referencedColumns: ["member_id"]
+          },
           {
             foreignKeyName: "assignments_created_by_fkey"
             columns: ["created_by"]
@@ -6863,6 +7074,14 @@ export type Database = {
       auto_reject_help_requests: { Args: never; Returns: undefined }
       can_access_division: { Args: { target_div: string }; Returns: boolean }
       can_access_event: { Args: { target_event: string }; Returns: boolean }
+      can_assign_to: {
+        Args: { assigner_id: string; target_id: string }
+        Returns: boolean
+      }
+      can_view_internal_submission: {
+        Args: { sub_id: string; viewer_id: string }
+        Returns: boolean
+      }
       claim_invite: { Args: { p_code: string }; Returns: string }
       close_expired_proposals: { Args: never; Returns: undefined }
       compute_relationship_level: {
@@ -6934,6 +7153,10 @@ export type Database = {
       get_my_role: {
         Args: never
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      get_role_tier: {
+        Args: { r: Database["public"]["Enums"]["user_role"] }
+        Returns: number
       }
       has_voted: { Args: { p_proposal: string }; Returns: boolean }
       is_event_pic: { Args: { target_event: string }; Returns: boolean }
@@ -7041,6 +7264,7 @@ export type Database = {
         | "Panduan_Gaya"
         | "Lainnya"
       assignment_scope: "Semua" | "Divisi" | "Individu"
+      assignment_type: "Pembina" | "Internal"
       budget_status: "On_Budget" | "Warning" | "Over_Budget"
       cancel_request_status:
         | "Pending"
@@ -7229,6 +7453,12 @@ export type Database = {
       relationship_level: "Erat" | "Aktif" | "Netral" | "Dingin" | "Putus"
       resource_kind: "Alat_Kerja" | "Aset"
       resource_scope: "Semua_Organisasi" | "Divisi" | "Peran"
+      review_status:
+        | "Dikumpulkan"
+        | "Direview"
+        | "Diteruskan"
+        | "Selesai"
+        | "Dibatalkan_Anggota"
       speaker_confirmation: "Invited" | "Confirmed" | "Declined" | "Cancelled"
       stakeholder_category:
         | "Kampus"
@@ -7403,6 +7633,7 @@ export const Constants = {
         "Lainnya",
       ],
       assignment_scope: ["Semua", "Divisi", "Individu"],
+      assignment_type: ["Pembina", "Internal"],
       budget_status: ["On_Budget", "Warning", "Over_Budget"],
       cancel_request_status: [
         "Pending",
@@ -7614,6 +7845,13 @@ export const Constants = {
       relationship_level: ["Erat", "Aktif", "Netral", "Dingin", "Putus"],
       resource_kind: ["Alat_Kerja", "Aset"],
       resource_scope: ["Semua_Organisasi", "Divisi", "Peran"],
+      review_status: [
+        "Dikumpulkan",
+        "Direview",
+        "Diteruskan",
+        "Selesai",
+        "Dibatalkan_Anggota",
+      ],
       speaker_confirmation: ["Invited", "Confirmed", "Declined", "Cancelled"],
       stakeholder_category: [
         "Kampus",
