@@ -34,6 +34,10 @@ export type MyRoomHandle = {
 export function createMyRoom(root: HTMLElement, options: MyRoomOptions): MyRoomHandle {
   "use strict";
   let destroyed = false;
+  // Semua listener & fetch dibatalkan lewat controller ini saat destroy(),
+  // supaya tidak ada sisa animasi/listener ketika komponen dipasang ulang.
+  const lifecycle = new AbortController();
+  const sig = lifecycle.signal;
   ("use strict");
   // Change these values to tune the visual without changing the animation logic.
   const CONFIG = {
