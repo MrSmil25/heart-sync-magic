@@ -576,6 +576,7 @@ export function createMyRoom(root: HTMLElement, options: MyRoomOptions): MyRoomH
       layoutDirty = true;
       if (options.initialOpen) begin(true);
     } catch (error) {
+      if (destroyed) return;
       gpu = null;
       fallback.hidden = false;
       pageStatus.textContent = "Mode ringan aktif. Klik untuk masuk.";
