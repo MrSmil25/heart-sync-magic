@@ -790,20 +790,26 @@ export function createMyRoom(root: HTMLElement, options: MyRoomOptions): MyRoomH
   requestDraw();
   return {
     destroy() {
+      if (destroyed) return;
       destroyed = true;
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
+      lifecycle.abort();
       media.removeEventListener("change", onMedia);
       document.removeEventListener("keydown", onKeydown);
       document.removeEventListener("visibilitychange", onVisibility);
       resize.disconnect();
       visibility.disconnect();
+      transition = null;
       if (gpu) {
         const ext = gpu.gl.getExtension("WEBGL_lose_context");
         if (ext) ext.loseContext();
         gpu = null;
       }
       models = [];
+      pose = [];
+      document.body.style.removeProperty("overflow");
+      document.body.style.removeProperty("pointer-events");
     },
     setStatus(text: string) {
       status.textContent = text;
