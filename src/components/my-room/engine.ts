@@ -528,15 +528,19 @@ export function createMyRoom(root: HTMLElement, options: MyRoomOptions): MyRoomH
   }
   async function init() {
     try {
-      const response = await fetch(MODEL_URL);
+      const response = await fetch(MODEL_URL, { signal: sig });
+      if (destroyed) return;
       if (!response.ok) throw Error("model fetch failed");
       const packed = Uint8Array.from(atob((await response.text()).trim()), (c) => c.charCodeAt(0));
+      if (destroyed) return;
       const bytes = await new Response(
           new Blob([packed]).stream().pipeThrough(new DecompressionStream("gzip")),
         ).arrayBuffer(),
         length = new DataView(bytes).getUint32(0, true),
         meta = JSON.parse(new TextDecoder().decode(new Uint8Array(bytes, 4, length))),
         base = 4 + length;
+      // Jangan pernah membuat konteks WebGL baru setelah komponen dilepas.
+      if (destroyed) return;
       gpu = createRenderer();
       for (const name of ["RK", "UI"]) {
         const parts = meta[name].map((m) => {
